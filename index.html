@@ -1,48 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DustSwap Checker</title>
-  <style>
-    body {
-      background-color: #0f172a;
-      color: white;
-      font-family: Arial;
-      text-align: center;
-      padding-top: 100px;
-    }
-
-    h1 {
-      font-size: 40px;
-    }
-
-    input {
-      width: 300px;
-      padding: 10px;
-      margin-top: 20px;
-      border-radius: 8px;
-      border: none;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #22c55e;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-  </style>
+  <title>DustSwap Wallet Checker</title>
 </head>
+<body style="text-align:center; font-family:sans-serif;">
 
-<body>
+  <h1>DustSwap Checker</h1>
 
-  <h1>DustSwap Wallet Checker</h1>
-  <p>Check your wallet activity</p>
+  <button onclick="connectWallet()" style="padding:10px 20px; font-size:16px;">
+    اتصال ولت
+  </button>
 
-  <input type="text" placeholder="Paste wallet address here" />
-  <br>
-  <button>CHECK WALLET</button>
+  <p id="wallet"></p>
+
+  <script>
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+          });
+
+          document.getElementById("wallet").innerText =
+            "Wallet: " + accounts[0];
+
+        } catch (error) {
+          alert("اجازه اتصال داده نشد");
+        }
+      } else {
+        alert("MetaMask نصب نیست!");
+      }
+    }
+  </script>
 
 </body>
 </html>
