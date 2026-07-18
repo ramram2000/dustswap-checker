@@ -14,24 +14,47 @@
   </button>
 
   <p id="wallet">Wallet: Not connected</p>
+  <p id="balance"></p>
+  <p id="network"></p>
 
   <script>
     async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({
-            method: 'eth_requestAccounts'
-          });
-
-          document.getElementById("wallet").innerText =
-            "Wallet: " + accounts[0];
-
-        } catch (error) {
-          alert("Connection rejected");
-          console.log(error);
-        }
-      } else {
+      if (!window.ethereum) {
         alert("MetaMask is not installed!");
+        return;
+      }
+
+      try {
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+
+        const wallet = accounts[0];
+        document.getElementById("wallet").innerText =
+          "Wallet: " + wallet;
+
+        // Get network
+        const chainId = await window.ethereum.request({
+          method: 'eth_chainId'
+        });
+
+        document.getElementById("network").innerText =
+          "Network: " + chainId;
+
+        // Get balance
+        const balance = await window.ethereum.request({
+          method: 'eth_getBalance',
+          params: [wallet, "latest"]
+        });
+
+        const ethBalance = parseInt(balance, 16) / Math.pow(10, 18);
+
+        document.getElementById("balance").innerText =
+          "Balance: " + ethBalance.toFixed(4) + " ETH";
+
+      } catch (error) {
+        alert("Connection rejected");
+        console.log(error);
       }
     }
   </script>
