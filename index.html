@@ -9,7 +9,7 @@
 
   <h1>DustSwap Checker</h1>
 
-  <button onclick="connectWallet()" style="padding:10px 20px; font-size:16px;">
+  <button id="walletButton" onclick="handleWallet()" style="padding:10px 20px; font-size:16px;">
     Connect Wallet
   </button>
 
@@ -18,6 +18,17 @@
   <p id="network"></p>
 
   <script>
+    let connected = false;
+    let currentAccount = null;
+
+    async function handleWallet() {
+      if (!connected) {
+        await connectWallet();
+      } else {
+        disconnectWallet();
+      }
+    }
+
     async function connectWallet() {
       if (!window.ethereum) {
         alert("MetaMask is not installed!");
@@ -29,11 +40,13 @@
           method: 'eth_requestAccounts'
         });
 
-        const wallet = accounts[0];
-        document.getElementById("wallet").innerText =
-          "Wallet: " + wallet;
+        currentAccount = accounts[0];
+        connected = true;
 
-        // Get network
+        document.getElementById("wallet").innerText =
+          "Wallet: " + currentAccount;
+
+        // Network
         const chainId = await window.ethereum.request({
           method: 'eth_chainId'
         });
@@ -41,10 +54,10 @@
         document.getElementById("network").innerText =
           "Network: " + chainId;
 
-        // Get balance
+        // Balance
         const balance = await window.ethereum.request({
           method: 'eth_getBalance',
-          params: [wallet, "latest"]
+          params: [currentAccount, "latest"]
         });
 
         const ethBalance = parseInt(balance, 16) / Math.pow(10, 18);
@@ -52,10 +65,28 @@
         document.getElementById("balance").innerText =
           "Balance: " + ethBalance.toFixed(4) + " ETH";
 
+        // Change button text
+        document.getElementById("walletButton").innerText =
+          "Disconnect Wallet";
+
       } catch (error) {
         alert("Connection rejected");
         console.log(error);
       }
+    }
+
+    function disconnectWallet() {
+      connected = false;
+      currentAccount = null;
+
+      document.getElementById("wallet").innerText =
+        "Wallet: Not connected";
+
+      document.getElementById("balance").innerText = "";
+      document.getElementById("network").innerText = "";
+
+      document.getElementById("walletButton").innerText =
+        "Connect Wallet";
     }
   </script>
 
