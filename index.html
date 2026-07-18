@@ -2,16 +2,18 @@
 <html>
 <head>
   <title>DustSwap Wallet Checker</title>
+  <meta charset="UTF-8">
 </head>
+
 <body style="text-align:center; font-family:sans-serif;">
 
   <h1>DustSwap Checker</h1>
 
   <button onclick="connectWallet()" style="padding:10px 20px; font-size:16px;">
-    اتصال ولت
+    Connect Wallet
   </button>
 
-  <p id="wallet"></p>
+  <p id="wallet">Wallet: Not connected</p>
 
   <script>
     async function connectWallet() {
@@ -25,10 +27,11 @@
             "Wallet: " + accounts[0];
 
         } catch (error) {
-          alert("اجازه اتصال داده نشد");
+          alert("Connection rejected");
+          console.log(error);
         }
       } else {
-        alert("MetaMask نصب نیست!");
+        alert("MetaMask is not installed!");
       }
     }
   </script>
